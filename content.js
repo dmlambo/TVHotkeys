@@ -14,7 +14,11 @@ const DEFAULT_HOTKEYS = [
     name: "Liquidate Entire Position",
     action: "sell",
     value: 1,
-    mode: "positionPercent",
+    amountMode: "positionPercent",
+    amountValue: 1.0,
+    priceMode: "limitOffsetPercent",
+    priceValue: -0.1,
+    eth: true,
     combo: { alt: true, ctrl: false, shift: false, meta: false, key: "k" }
   }
 ];
