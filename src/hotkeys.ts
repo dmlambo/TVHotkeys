@@ -1,21 +1,18 @@
-enum Action {
-  Buy,
-  Sell
-}
+export type Action = 
+  "Buy" |
+  "Sell"
 
-enum AmountMode {
-  Shares,
-  Percent // Percent of position, or percent of account
-}
+export type AmountMode = 
+  "Shares" | 
+  "Percent"
 
-enum PriceMode {
-  PriceOffset,
-  PercentOffset
-}
+export type PriceMode =
+  "Market" |
+  "PriceOffset" | 
+  "PercentOffset"
 
 export class Order 
 {
-  name: string
   action: Action
   amountMode: AmountMode
   amountValue: number
@@ -24,8 +21,7 @@ export class Order
 
   eth: boolean
 
-  constructor(name: string, action: Action, amountMode: AmountMode, amountValue: number, priceMode: PriceMode, priceValue: number, eth: boolean) {
-    this.name = name
+  constructor(action: Action, amountMode: AmountMode, amountValue: number, priceMode: PriceMode, priceValue: number, eth: boolean) {
     this.action = action
     this.amountMode = amountMode
     this.amountValue = amountValue
@@ -52,23 +48,35 @@ export class Hotkey
     this.meta = meta
     this.key = key
   }
+
+  public toString() {
+    var mod = ""
+    if (this.alt) mod += "Alt + "
+    if (this.shift) mod += "Shift + "
+    if (this.ctrl) mod += "Ctrl + "
+    if (this.meta) mod += "Meta + "
+    return mod + this.key.toUpperCase()
+  }
 }
 
 export class HotkeyBinding
 {
+  name: string
   hotkey: Hotkey
   order: Order
 
-  constructor(hotkey: Hotkey, order: Order)
+  constructor(name: string, hotkey: Hotkey, order: Order)
   {
+    this.name = name
     this.hotkey = hotkey
     this.order = order
   }
 }
 
 // Hotkey Schema
-const DEFAULT_HOTKEYS = [
+export const DEFAULT_HOTKEYS: Array<HotkeyBinding> = [
   new HotkeyBinding(
+    "Liquidate Entire Position",
     {
       alt: true, 
       ctrl: false, 
@@ -77,11 +85,10 @@ const DEFAULT_HOTKEYS = [
       key: "k"
     }, 
     {
-      name: "Liquidate Entire Position",
-      action: Action.Sell,
-      amountMode: AmountMode.Percent,
+      action: "Sell",
+      amountMode: "Percent",
       amountValue: 1.0,
-      priceMode: PriceMode.PercentOffset,
+      priceMode: "PercentOffset",
       priceValue: -0.1,
       eth: true,
   })

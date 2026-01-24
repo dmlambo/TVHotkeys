@@ -1,33 +1,25 @@
-const list = document.getElementById("list");
-const capture = document.getElementById("capture");
+import { Hotkey, HotkeyBinding } from "./hotkeys";
 
-function formatCombo(c) {
-  return [
-    c.ctrl && "Ctrl",
-    c.alt && "Alt",
-    c.shift && "Shift",
-    c.meta && "Meta",
-    c.key.toUpperCase()
-  ].filter(Boolean).join(" + ");
+const list: HTMLLIElement = document.getElementById("list") as HTMLLIElement;
+const capture: HTMLButtonElement = document.getElementById("capture") as HTMLButtonElement;
+
+function loadHotkeys(cb: (hotkeys: HotkeyBinding[]) => void) {
+  browser.storage.sync.get({ hotkeys: [] }).then((res) => cb(res.hotkeys));
 }
 
-function loadHotkeys(cb) {
-  chrome.storage.sync.get({ hotkeys: [] }, (res) => cb(res.hotkeys));
+function saveHotkeys(hotkeys: HotkeyBinding[] ) {
+  browser.storage.sync.set({ hotkeys: JSON.stringify(hotkeys) });
 }
 
-function saveHotkeys(hotkeys) {
-  chrome.storage.sync.set({ hotkeys });
-}
-
-function render(hotkeys) {
+function render(hotkeys: HotkeyBinding[]) {
   list.innerHTML = "";
 
   for (const hk of hotkeys) {
     const li = document.createElement("li");
 
     const label = document.createElement("span");
-    label.className = "combo";
-    label.textContent = formatCombo(hk.combo);
+    label.className = "hotkey";
+    label.textContent = hk.hotkey.toString();
 
     const del = document.createElement("button");
     del.textContent = "✕";
@@ -47,7 +39,7 @@ capture.addEventListener("click", () => {
   capture.textContent = "Press combo…";
   capture.focus();
 
-  const handler = (e) => {
+  const handler = (e: KeyboardEvent) => {
     e.preventDefault();
 
     if (e.key === "Escape") {
@@ -64,7 +56,7 @@ capture.addEventListener("click", () => {
       return
     }
 
-    const combo = {
+    const newHotkey: Hotkey = {
       key: e.key.toLowerCase(),
       ctrl: e.ctrlKey,
       alt: e.altKey,
@@ -72,15 +64,23 @@ capture.addEventListener("click", () => {
       meta: e.metaKey
     };    
 
-    loadHotkeys((hotkeys) => {
-      console.log('fuck off')
-      hotkeys.push({
-        id: "doThing", // later: let user choose action
-        combo
-      });
+    loadHotkeys((hotkeyBindings) => {
+      const newHotkeyBinding: HotkeyBinding = {
+        name: "New Hotkey Binding",
+        hotkey: newHotkey,
+        order: {
+          action: "Buy",
+          amountMode: "Shares",
+          amountValue: 100,
+          priceMode: "Market",
+          priceValue: 0,
+          eth: true
+        }
+      }
+      hotkeyBindings.push(newHotkeyBinding);
 
-      saveHotkeys(hotkeys);
-      render(hotkeys);
+      saveHotkeys(hotkeyBindings);
+      render(hotkeyBindings);
     });
 
     capture.textContent = "Click, then press a key combo";
