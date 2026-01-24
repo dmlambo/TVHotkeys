@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "TradingView Paper Hotkeys",
+  "version": "1.0",
+  "host_permissions": [
+    "https://www.tradingview.com/*"
+  ],
+  "permissions": [
+    "storage"
+  ],  
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "@tv-paper-hotkeys",
+      "strict_min_version": "58.0"
+    }
+  }, 
+  "content_scripts": [
+    {
+      "matches": ["https://www.tradingview.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["pageScript.js"],
+      "matches": ["https://*.tradingview.com/chart/*"]
+    }
+  ]
+}
