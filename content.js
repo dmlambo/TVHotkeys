@@ -12,7 +12,9 @@ hotkeys = []
 const DEFAULT_HOTKEYS = [
   {
     name: "Liquidate Entire Position",
-    action: "liquidateAll",
+    action: "sell",
+    value: 1,
+    mode: "positionPercent",
     combo: { alt: true, ctrl: false, shift: false, meta: false, key: "k" }
   }
 ];
@@ -49,9 +51,9 @@ document.addEventListener("keydown", (e) => {
       if (e.shiftKey) mod += "Shift + "
       if (e.ctrlKey) mod += "Ctrl + "
       if (e.metaKey) mod += "Meta + "
-      mod += e.key
+      mod += e.key.toUpperCase()
 
-      console.log("Hotkey: ", mod);
+      console.log("Hotkey: ", mod, "(" + hk.name + ")")
 
       window.postMessage(
         {

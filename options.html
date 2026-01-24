@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 10px;
+      width: 300px;
+    }
+    ul {
+      padding: 0;
+      list-style: none;
+    }
+    li {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .combo {
+      font-family: monospace;
+    }
+    button {
+      margin-left: 6px;
+    }
+    #capture {
+      margin-top: 10px;
+      padding: 6px;
+      border: 1px dashed #aaa;
+      text-align: center;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h3>Hotkeys</h3>
+
+  <ul id="list"></ul>
+
+  <div id="capture">Click, then press a key combo</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
