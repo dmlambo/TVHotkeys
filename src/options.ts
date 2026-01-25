@@ -1,0 +1,215 @@
+import { DEFAULT_HOTKEYS, Hotkey, HotkeyBinding } from "./hotkeys.js"
+import { Action, AmountMode, OrderMode, PriceMode, PriceReference } from "./enums.js"
+import { RelativePrice } from "./order.js"
+
+const bindingsDiv = document.getElementById("bindings")!;
+const capture: HTMLButtonElement = document.getElementById("capture") as HTMLButtonElement
+
+function loadHotkeys(cb: (hotkeys: HotkeyBinding[]) => void) {
+  browser.storage.sync.get({ hotkeys: JSON.stringify(DEFAULT_HOTKEYS) }).then((res) => cb(JSON.parse(res.hotkeys)))
+}
+
+function saveHotkeys(hotkeys: HotkeyBinding[] ) {
+  browser.storage.sync.set({ hotkeys: JSON.stringify(hotkeys) })
+}
+
+function fillSelect<T extends string>(
+  select: HTMLSelectElement,
+  values: readonly T[]
+) {
+  select.innerHTML = "";
+  for (const v of values) {
+    const opt = document.createElement("option");
+    opt.value = v;
+    opt.textContent = v;
+    select.appendChild(opt);
+  }
+}
+
+function renderBinding(
+  binding: HotkeyBinding,
+  onChange: () => void
+): HTMLElement {
+  const tpl = document.getElementById("binding-template") as HTMLTemplateElement;
+  const el = tpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
+
+  const nameInput = el.querySelector(".name") as HTMLInputElement;
+  const hotkeyDiv = el.querySelector(".hotkey") as HTMLDivElement;
+
+  const actionSel = el.querySelector(".action") as HTMLSelectElement;
+  const amountModeSel = el.querySelector(".amountMode") as HTMLSelectElement;
+  const amountValueInput = el.querySelector(".amountValue") as HTMLInputElement;
+
+  const orderModeSel = el.querySelector(".orderMode") as HTMLSelectElement;
+
+  const priceSection = el.querySelector(".priceSection") as HTMLDivElement;
+  const priceRefSel = el.querySelector(".priceReference") as HTMLSelectElement;
+  const priceModeSel = el.querySelector(".priceMode") as HTMLSelectElement;
+  const priceValueInput = el.querySelector(".priceValue") as HTMLInputElement;
+
+  const deleteBtn = el.querySelector(".delete") as HTMLButtonElement;
+
+  // Fill dropdowns
+  fillSelect(actionSel, Object.values(Action) as string[]);
+  fillSelect(amountModeSel, Object.values(AmountMode) as string[]);
+  fillSelect(orderModeSel, Object.values(OrderMode) as string[]);
+  fillSelect(priceRefSel, Object.values(PriceReference) as string[]);
+  fillSelect(priceModeSel, Object.values(PriceMode) as string[]);
+
+  // Initial values
+  nameInput.value = binding.name;
+  hotkeyDiv.textContent = Hotkey.toString(binding.hotkey);
+
+  actionSel.value = binding.order.action;
+  amountModeSel.value = binding.order.amountMode;
+  amountValueInput.value = String(binding.order.amountValue);
+  orderModeSel.value = binding.order.orderMode;
+
+  if (binding.order.price) {
+    priceRefSel.value = binding.order.price.reference;
+    priceModeSel.value = binding.order.price.mode;
+    priceValueInput.value = String(binding.order.price.value);
+  }
+
+  // Market vs non-market UI
+  function updatePriceVisibility() {
+    const isMarket = orderModeSel.value === "Market";
+    priceSection.style.display = isMarket ? "none" : "";
+  }
+
+  updatePriceVisibility();
+
+  // Wiring updates back into model
+  nameInput.onchange = () => {
+    binding.name = nameInput.value;
+    onChange();
+  };
+
+  actionSel.onchange = () => {
+    binding.order.action = actionSel.value as Action;
+    onChange();
+  };
+
+  amountModeSel.onchange = () => {
+    binding.order.amountMode = amountModeSel.value as AmountMode;
+    onChange();
+  };
+
+  amountValueInput.onchange = () => {
+    binding.order.amountValue = Number(amountValueInput.value);
+    onChange();
+  };
+
+  orderModeSel.onchange = () => {
+    binding.order.orderMode = orderModeSel.value as OrderMode;
+
+    if (binding.order.orderMode === "Market") {
+      binding.order.price = undefined;
+    } else if (!binding.order.price) {
+      // Create default relative price when switching away from Market
+      binding.order.price = new RelativePrice(PriceReference.Ask, PriceMode.Offset, 0);
+    }
+
+    updatePriceVisibility();
+    onChange();
+  };
+
+  priceRefSel.onchange = () => {
+    binding.order.price!.reference = PriceReference[priceRefSel.value as keyof typeof PriceReference]
+    onChange();
+  };
+
+  priceModeSel.onchange = () => {
+    binding.order.price!.mode = PriceMode[priceModeSel.value as keyof typeof PriceMode];
+    onChange();
+  };
+
+  priceValueInput.onchange = () => {
+    binding.order.price!.value = Number(priceValueInput.value);
+    onChange();
+  };
+
+  deleteBtn.onclick = () => {
+    // handled by parent
+    el.dispatchEvent(new CustomEvent("delete", { bubbles: true }));
+  };
+
+  return el;
+}
+
+function render(bindings: HotkeyBinding[]) {
+  bindingsDiv.innerHTML = ""
+
+  for (const binding of bindings) {
+    const row = renderBinding(binding, () => saveHotkeys(bindings));
+
+    const label = document.createElement("span")
+    label.className = "hotkey"
+    label.textContent = Hotkey.toString(binding.hotkey)
+
+    const del = document.createElement("button")
+    del.textContent = "✕"
+    del.onclick = () => {
+      saveHotkeys(bindings.filter(h => h !== binding))
+      render(bindings.filter(h => h !== binding))
+    }
+
+    bindingsDiv.appendChild(row);
+  }
+}
+
+loadHotkeys(render)
+
+capture.addEventListener("click", () => {
+  capture.textContent = "Press combo…"
+  capture.focus()
+
+  const handler = (e: KeyboardEvent) => {
+    e.preventDefault()
+
+    if (e.key === "Escape") {
+      capture.textContent = "Click, then press a key combo"
+      window.removeEventListener("keydown", handler, true)
+      return
+    }
+
+    if (["Control", "Shift", "Alt", "Meta"].includes(e.key)) return
+
+    // Require at least one modifier
+    if (!e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey) {
+      capture.textContent = "Use a modifier key"
+      return
+    }
+
+    const newHotkey: Hotkey = {
+      key: e.key.toLowerCase(),
+      ctrl: e.ctrlKey,
+      alt: e.altKey,
+      shift: e.shiftKey,
+      meta: e.metaKey
+    }    
+
+    loadHotkeys((hotkeyBindings) => {
+      const newHotkeyBinding: HotkeyBinding = {
+        name: "New Hotkey Binding",
+        hotkey: newHotkey,
+        order: {
+          action: Action.Buy,
+          amountMode: AmountMode.Shares,
+          amountValue: 100,
+          orderMode: OrderMode.Market,
+          price: undefined
+        }
+      }
+      hotkeyBindings.push(newHotkeyBinding)
+
+      saveHotkeys(hotkeyBindings)
+      render(hotkeyBindings)
+    })
+
+    capture.textContent = "Click, then press a key combo"
+    window.removeEventListener("keydown", handler, true)
+  }
+
+  window.addEventListener("keydown", handler, true)
+})

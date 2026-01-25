@@ -1,4 +1,4 @@
-import { DEFAULT_HOTKEYS, Hotkey, HotkeyBinding } from "./hotkeys";
+import { DEFAULT_HOTKEYS, Hotkey, HotkeyBinding } from "./hotkeys.js";
 
 // Inject page-context script
 const script = document.createElement("script");

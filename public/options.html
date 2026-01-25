@@ -35,10 +35,31 @@
 <body>
   <h3>Hotkeys</h3>
 
-  <ul id="list"></ul>
+  <div id="bindings"></div>
+    
+  <template id="binding-template">
+    <div class="binding">
+    <input class="name" placeholder="Name" />
+
+    <div class="hotkey"></div>
+
+    <select class="action"></select>
+    <select class="amountMode"></select>
+    <input class="amountValue" type="number" step="any" />
+
+    <select class="orderMode"></select>
+
+    <div class="priceSection">
+      <select class="priceReference"></select>
+      <select class="priceMode"></select>
+      <input class="priceValue" type="number" step="any" />
+    </div>
+
+    <button class="delete">Delete</button>
+  </template>
 
   <div id="capture">Click, then press a key combo</div>
 
-  <script src="popup.js"></script>
+  <script type="module" src="options.js"></script>
 </body>
 </html>

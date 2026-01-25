@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp public/manifest.json dist/manifest.json && cp public/options.html dist/options.html",
     "watch": "tsc -w"
   },
   "devDependencies": {

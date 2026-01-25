@@ -20,14 +20,14 @@
   }, 
   "content_scripts": [
     {
-      "matches": ["https://www.tradingview.com/*"],
+      "matches": ["https://*.tradingview.com/*"],
       "js": ["content.js"]
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["pageScript.js"],
-      "matches": ["https://*.tradingview.com/chart/*"]
+      "resources": ["pageScript.js", "hotkeys.js", "order.js", "enums.js"],
+      "matches": ["https://www.tradingview.com/chart/*"]
     }
   ]
 }

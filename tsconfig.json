@@ -5,6 +5,9 @@
     "lib": ["DOM", "ES2020"],
     "strict": true,
 
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": false,
+    
     "rootDir": "src",
     "outDir": "dist",
 

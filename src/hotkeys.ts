@@ -1,35 +1,5 @@
-export type Action = 
-  "Buy" |
-  "Sell"
-
-export type AmountMode = 
-  "Shares" | 
-  "Percent"
-
-export type PriceMode =
-  "Market" |
-  "PriceOffset" | 
-  "PercentOffset"
-
-export class Order 
-{
-  action: Action
-  amountMode: AmountMode
-  amountValue: number
-  priceMode: PriceMode
-  priceValue: number
-
-  eth: boolean
-
-  constructor(action: Action, amountMode: AmountMode, amountValue: number, priceMode: PriceMode, priceValue: number, eth: boolean) {
-    this.action = action
-    this.amountMode = amountMode
-    this.amountValue = amountValue
-    this.priceMode = priceMode
-    this.priceValue = priceValue
-    this.eth = eth
-  }
-}
+import { Action, AmountMode, OrderMode, PriceMode, PriceReference } from "./enums.js"
+import { Order, RelativePrice } from "./order.js"
 
 export class Hotkey
 {
@@ -49,13 +19,13 @@ export class Hotkey
     this.key = key
   }
 
-  public toString() {
+  public static toString(hotkey: Hotkey) {
     var mod = ""
-    if (this.alt) mod += "Alt + "
-    if (this.shift) mod += "Shift + "
-    if (this.ctrl) mod += "Ctrl + "
-    if (this.meta) mod += "Meta + "
-    return mod + this.key.toUpperCase()
+    if (hotkey.alt) mod += "Alt + "
+    if (hotkey.shift) mod += "Shift + "
+    if (hotkey.ctrl) mod += "Ctrl + "
+    if (hotkey.meta) mod += "Meta + "
+    return mod + hotkey.key.toUpperCase()
   }
 }
 
@@ -85,11 +55,14 @@ export const DEFAULT_HOTKEYS: Array<HotkeyBinding> = [
       key: "k"
     }, 
     {
-      action: "Sell",
-      amountMode: "Percent",
+      action: Action.Sell,
+      orderMode: OrderMode.Limit,
+      amountMode: AmountMode.PercentPosition,
       amountValue: 1.0,
-      priceMode: "PercentOffset",
-      priceValue: -0.1,
-      eth: true,
+      price: {
+        mode: PriceMode.PercentOffset,
+        reference: PriceReference.Ask,
+        value: 0.1
+      }
   })
 ];
