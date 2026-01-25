@@ -8,7 +8,7 @@ window.addEventListener("message", async (event) => {
   if (event.source !== window) return;
   if (event.data?.source !== "TV-hotkeys-extension") return;
 
-  const order = event.data as Order
+  const order = event.data.order as Order
 
   // To execute: 
   // foo = TradingViewApi.trading()._orderViewController._orderViewModel.preOrder()

@@ -51,7 +51,7 @@ export function main() {
         window.postMessage(
           {
             source: "TV-hotkeys-extension",
-            action: hk.order
+            order: hk.order
           },
           "*"
         );
