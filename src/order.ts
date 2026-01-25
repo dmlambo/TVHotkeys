@@ -46,13 +46,15 @@ export class Order
   orderMode: OrderMode
   amountMode: AmountMode
   amountValue: number
-  price: RelativePrice | undefined
+  price?: RelativePrice
+  roundSharesTo?: number
 
-  constructor(action: Action, orderMode: OrderMode, amountMode: AmountMode, amountValue: number, price?: RelativePrice) {
+  constructor(action: Action, orderMode: OrderMode, amountMode: AmountMode, amountValue: number, price?: RelativePrice, roundSharesTo?: number) {
     this.action = action
     this.orderMode = orderMode
     this.amountMode = amountMode
     this.amountValue = amountValue
     this.price = price
+    this.roundSharesTo = roundSharesTo
   }
 }

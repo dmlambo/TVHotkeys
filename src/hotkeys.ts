@@ -64,3 +64,5 @@ export const DEFAULT_HOTKEYS: Array<HotkeyBinding> = [
       }
   })
 ];
+
+export const NO_BINDING = new Hotkey(false, false, false, false, "")

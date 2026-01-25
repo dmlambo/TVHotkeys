@@ -111,7 +111,7 @@ window.addEventListener("message", async (event) => {
       }
       const availableValue = accountManagerInfo.summary.find((x: any) => x.text === "Available funds")
       const available = availableValue.wValue.value()
-      preOrder.qty = Math.floor(available / orderPrice * order.amountValue)
+      preOrder.qty = available / orderPrice * order.amountValue
       if (preOrder.qty <= 0) {
         console.warn("Number of shares too small to trade: ", preOrder.qty)
         return
@@ -127,7 +127,7 @@ window.addEventListener("message", async (event) => {
       }
       const position = await activeBroker.positionById(preOrder.symbol)
       const quantity = position.qty
-      preOrder.qty = Math.ceil(quantity * order.amountValue)
+      preOrder.qty = quantity * order.amountValue
       break
   }
 
@@ -138,6 +138,14 @@ window.addEventListener("message", async (event) => {
     case "Sell":
       preOrder.side = -1
       break
+  }
+
+  if(order.roundSharesTo && order.roundSharesTo > 0) {
+    if (order.roundSharesTo == 1) {
+      preOrder.qty = Math.round(preOrder.qty)
+    } else {
+      preOrder.qty = Math.round(preOrder.qty / order.roundSharesTo) * order.roundSharesTo
+    }
   }
 
   console.log("Placing order: ", preOrder)

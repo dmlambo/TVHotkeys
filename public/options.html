@@ -8,22 +8,17 @@
       padding: 10px;
       width: 300px;
     }
-    ul {
-      padding: 0;
-      list-style: none;
-    }
-    li {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
     .hotkey {
       font-family: monospace;
     }
-    button {
-      margin-left: 6px;
+    .capture {
+      margin-top: 10px;
+      padding: 6px;
+      border: 1px dashed #aaa;
+      text-align: center;
+      cursor: pointer;
     }
-    #capture {
+    .newBinding {
       margin-top: 10px;
       padding: 6px;
       border: 1px dashed #aaa;
@@ -36,16 +31,19 @@
   <h3>Hotkeys</h3>
 
   <div id="bindings"></div>
-    
+  <div class="newBinding">Add New Hotkey</div>
+
   <template id="binding-template">
     <div class="binding">
     <input class="name" placeholder="Name" />
 
     <div class="hotkey"></div>
+    <div class="capture">Change Binding</div>
 
     <select class="action"></select>
     <select class="amountMode"></select>
-    <input class="amountValue" type="number" step="any" />
+    <input class="amountValue" type="number" step="any" min="0" />
+    <input class="sharesRound" type="number" step="0.000001" min="0.000001" />
 
     <select class="orderMode"></select>
 
@@ -57,9 +55,6 @@
 
     <button class="delete">Delete</button>
   </template>
-
-  <div id="capture">Click, then press a key combo</div>
-
   <script type="module" src="options.js"></script>
 </body>
 </html>
