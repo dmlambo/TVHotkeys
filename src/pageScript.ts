@@ -148,6 +148,10 @@ window.addEventListener("message", async (event) => {
     }
   }
 
-  console.log("Placing order: ", preOrder)
-  activeBroker.placeOrder(preOrder)
+  if (preOrder.qty > 0) {
+    console.log("Placing order: ", preOrder)
+    activeBroker.placeOrder(preOrder)
+  } else {
+    console.log("Order for no shares not executed: ", preOrder)
+  }
 });

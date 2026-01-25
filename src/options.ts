@@ -179,6 +179,11 @@ function renderBinding(
     onChange(false);
   };
 
+  sharesRoundInput.onchange = () => {
+    binding.order.roundSharesTo = Number(sharesRoundInput.value);
+    onChange(false);
+  }
+
   orderModeSel.onchange = () => {
     binding.order.orderMode = orderModeSel.value as OrderMode;
 
