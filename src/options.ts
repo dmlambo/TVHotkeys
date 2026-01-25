@@ -1,6 +1,5 @@
-import { DEFAULT_HOTKEYS, Hotkey, HotkeyBinding } from "./hotkeys.js"
-import { Action, AmountMode, OrderMode, PriceMode, PriceReference } from "./enums.js"
-import { RelativePrice } from "./order.js"
+import { DEFAULT_HOTKEYS, Hotkey, HotkeyBinding } from "./hotkeys.js";
+import { Action, AmountMode, OrderMode, PriceMode, PriceReference, RelativePrice } from "./order.js";
 
 const bindingsDiv = document.getElementById("bindings")!;
 const capture: HTMLButtonElement = document.getElementById("capture") as HTMLButtonElement

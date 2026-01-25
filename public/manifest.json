@@ -21,12 +21,12 @@
   "content_scripts": [
     {
       "matches": ["https://*.tradingview.com/*"],
-      "js": ["content.js"]
+      "js": ["bootstrap.js"]
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["pageScript.js", "hotkeys.js", "order.js", "enums.js"],
+      "resources": ["pageScript.js", "content.js", "hotkeys.js", "order.js", "enums.js"],
       "matches": ["https://www.tradingview.com/chart/*"]
     }
   ]

@@ -1,5 +1,4 @@
-import { Action, AmountMode, OrderMode, PriceMode, PriceReference } from "./enums.js"
-import { Order, RelativePrice } from "./order.js"
+import { Action, AmountMode, OrderMode, PriceMode, PriceReference, Order } from "./order.js"
 
 export class Hotkey
 {
@@ -43,7 +42,6 @@ export class HotkeyBinding
   }
 }
 
-// Hotkey Schema
 export const DEFAULT_HOTKEYS: Array<HotkeyBinding> = [
   new HotkeyBinding(
     "Liquidate Entire Position",
