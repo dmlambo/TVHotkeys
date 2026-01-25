@@ -2,7 +2,8 @@ import { DEFAULT_HOTKEYS, Hotkey, HotkeyBinding, NO_BINDING } from "./hotkeys.js
 import { Action, AmountMode, OrderMode, PriceMode, PriceReference, RelativePrice } from "./order.js";
 
 const bindingsDiv = document.getElementById("bindings")!;
-const newBindingDiv: HTMLDivElement = document.querySelector(".newBinding") as HTMLDivElement
+const newBindingButton: HTMLButtonElement = document.querySelector(".newBinding") as HTMLButtonElement
+
 var capturing = false
 
 function loadHotkeys(cb: (hotkeys: HotkeyBinding[]) => void) {
@@ -90,8 +91,7 @@ function renderBinding(
   const el = tpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
 
   const nameInput = el.querySelector(".name") as HTMLInputElement;
-  const hotkeyDiv = el.querySelector(".hotkey") as HTMLDivElement;
-  const captureHotkeyDiv = el.querySelector(".capture") as HTMLDivElement;
+  const hotkeySelect = el.querySelector(".hotkeySelect") as HTMLDivElement;
 
   const actionSel = el.querySelector(".action") as HTMLSelectElement;
   const amountModeSel = el.querySelector(".amountMode") as HTMLSelectElement;
@@ -100,7 +100,7 @@ function renderBinding(
 
   const orderModeSel = el.querySelector(".orderMode") as HTMLSelectElement;
 
-  const priceSection = el.querySelector(".priceSection") as HTMLDivElement;
+  const priceSection = el.querySelector("#priceSection") as HTMLDivElement;
   const priceRefSel = el.querySelector(".priceReference") as HTMLSelectElement;
   const priceModeSel = el.querySelector(".priceMode") as HTMLSelectElement;
   const priceValueInput = el.querySelector(".priceValue") as HTMLInputElement;
@@ -116,7 +116,13 @@ function renderBinding(
 
   // Initial values
   nameInput.value = binding.name;
-  hotkeyDiv.textContent = Hotkey.toString(binding.hotkey);
+
+  const hotkeyString = Hotkey.toString(binding.hotkey);
+  if (hotkeyString) {
+    hotkeySelect.textContent = hotkeyString;
+  } else {
+    hotkeySelect.textContent = "No Binding"
+  }
 
   actionSel.value = binding.order.action;
   amountModeSel.value = binding.order.amountMode;
@@ -144,15 +150,17 @@ function renderBinding(
     onChange(false);
   };
 
-  captureHotkeyDiv.onclick = () => {
+  hotkeySelect.onclick = () => {
     if (!capturing) {
       capturing = true
-      const prevText = captureHotkeyDiv.textContent
-      captureHotkeyDiv.textContent = "Press combo…"
-      captureHotkeyDiv.focus()
-      captureHotkey(captureHotkeyDiv, binding, 
-        () => { captureHotkeyDiv.textContent = "Use a modifier key" }, 
-        (changed) => { captureHotkeyDiv.textContent = prevText; capturing = false; if(changed) onChange(true) })
+
+      const prevText = hotkeySelect.textContent
+
+      hotkeySelect.textContent = "Press combo…"
+      hotkeySelect.focus()
+      captureHotkey(hotkeySelect, binding, 
+        () => { hotkeySelect.textContent = "Use a modifier key" }, 
+        (changed) => { capturing = false; if(changed) onChange(true); else hotkeySelect.textContent = prevText })
     }
   }
 
@@ -223,8 +231,6 @@ function render(bindings: HotkeyBinding[]) {
   }
 }
 
-newBindingDiv.onclick = () => {
-  newBinding()
-}
+newBindingButton.onclick = newBinding
 
 loadHotkeys(render)
