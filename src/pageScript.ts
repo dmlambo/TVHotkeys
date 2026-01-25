@@ -101,7 +101,7 @@ window.addEventListener("message", async (event) => {
         console.warn("Cannot trade negative amount of shares: ", order.amountValue)
         return
       }
-      preOrder.qty = order.amountValue
+      preOrder.qty = order.amountValue / 100
       break
     // Not sure if this is the best way to get available funds. There should be an easier cleaner way, probably.
     case "PercentAvailableFunds":
@@ -111,7 +111,7 @@ window.addEventListener("message", async (event) => {
       }
       const availableValue = accountManagerInfo.summary.find((x: any) => x.text === "Available funds")
       const available = availableValue.wValue.value()
-      preOrder.qty = available / orderPrice * order.amountValue
+      preOrder.qty = available / orderPrice * order.amountValue / 100
       if (preOrder.qty <= 0) {
         console.warn("Number of shares too small to trade: ", preOrder.qty)
         return
@@ -127,7 +127,7 @@ window.addEventListener("message", async (event) => {
       }
       const position = await activeBroker.positionById(preOrder.symbol)
       const quantity = position.qty
-      preOrder.qty = quantity * order.amountValue
+      preOrder.qty = quantity * order.amountValue / 100
       break
   }
 
