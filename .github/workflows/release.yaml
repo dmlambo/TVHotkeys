@@ -34,7 +34,7 @@ jobs:
 
       - name: Zip dist
         run: zip -qq -r release.zip .
-        working_directory: dist
+        working-directory: dist
 
       - name: Read version
         id: version
