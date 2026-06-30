@@ -33,7 +33,8 @@ jobs:
         run: npm run build
 
       - name: Zip dist
-        run: zip -qq -r dist/release.zip dist
+        run: zip -qq -r release.zip .
+        working_directory: dist
 
       - name: Read version
         id: version
