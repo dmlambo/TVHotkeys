@@ -28,6 +28,11 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Zip dist
+      - uses: montudor/action-zip@v1
+        with:
+          args: zip -qq -r dist/release.zip dist
+
       - name: Read version
         id: version
         run: echo "VERSION=$(cat VERSION)" >> $GITHUB_OUTPUT
