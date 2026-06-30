@@ -16,7 +16,10 @@
     "gecko": {
       "id": "@tv-paper-hotkeys",
       "strict_min_version": "58.0",
-      "data_collection_permissions": []
+      "data_collection_permissions": {
+        "required": ["websiteActivity", "websiteContent"],
+        "optional": []
+      }
     }
   }, 
   "content_scripts": [
