@@ -1,11 +1,10 @@
 name: Release on VERSION change
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - VERSION
-
-on: workflow_dispatch
 
 permissions:
   contents: write  # required to create releases
